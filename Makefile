@@ -35,6 +35,10 @@ upload: $(TARGET).hex
 	$(AVRDUDE) -v -p $(MCU_AVRDUDE) -c $(PROGRAMMER)\
 		-U flash:w:$(TARGET).hex
 
+setfuses:
+	$(AVRDUDE) -v -p $(MCU_AVRDUDE) -c $(PROGRAMMER)\
+		-U lfuse:w:e6:m
+
 tags: $(SOURCES)
 	@ctags --exclude=.git -R . /usr/avr/include/
 
