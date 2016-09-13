@@ -1,18 +1,24 @@
+# Global AVR utilities
 AVRDUDE=avrdude
 OBJCOPY=avr-objcopy
 OBJDUMP=avr-objdump
 CC=avr-gcc
 RM=rm -f
 
+# Microcontroller used
 MCU=atmega328p
 MCU_AVRDUDE=m328p
 F_CPU=16000000UL
-BIN_FORMAT=ihex
-PORT?=/dev/ttyACM0
-BAUD=9600
+
+PORT?=/dev/ttyUSB0
+BAUDRATE=9600
+OPEN_SERIAL=picocom $(PORT) -b $(BAUDRATE) --imap lfcrlf
+
 PROGRAMMER?=usbtiny
+
+BIN_FORMAT=ihex
 CFLAGS=-Wall -Wextra -Wno-unused-parameter -g -Os -DF_CPU=$(F_CPU)\
-       -DBAUD=$(BAUD) -mmcu=$(MCU) 
+       -DBAUDRATE=$(BAUDRATE) -mmcu=$(MCU) 
 
 TARGET=main
 SRC:=$(TARGET).c 
@@ -34,6 +40,9 @@ all: $(TARGET).hex $(TARGET).elf tags
 upload: $(TARGET).hex
 	$(AVRDUDE) -v -p $(MCU_AVRDUDE) -c $(PROGRAMMER)\
 		-U flash:w:$(TARGET).hex
+
+serial:
+	$(OPEN_SERIAL)
 
 setfuses:
 	$(AVRDUDE) -v -p $(MCU_AVRDUDE) -c $(PROGRAMMER)\
