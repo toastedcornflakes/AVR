@@ -11,17 +11,17 @@ MCU_AVRDUDE=m328p
 F_CPU=16000000UL
 
 PORT?=/dev/ttyUSB0
-BAUDRATE=9600
-OPEN_SERIAL=picocom $(PORT) -b $(BAUDRATE) --imap lfcrlf
+BAUD=9600
+OPEN_SERIAL=picocom $(PORT) -b $(BAUD) --imap lfcrlf
 
 PROGRAMMER?=usbtiny
 
 BIN_FORMAT=ihex
 CFLAGS=-Wall -Wextra -Wno-unused-parameter -g -Os -DF_CPU=$(F_CPU)\
-       -DBAUDRATE=$(BAUDRATE) -mmcu=$(MCU) 
+       -DBAUD=$(BAUD) -mmcu=$(MCU) 
 
 TARGET=main
-SRC:=$(TARGET).c 
+SRC:=$(TARGET).c support/uart.c
 OBJ:=$(SRC:.c=.o) 
 
 .SUFFIXES: .elf .hex

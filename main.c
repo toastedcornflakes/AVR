@@ -3,9 +3,12 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
+#include "support/uart.h"
 
 int main()
 {
+	uart_init0();
+
 	// set PC3 as input
 	DDRC |= _BV(DDC3);
 
