@@ -1,0 +1,1 @@
+void streams_setup();

@@ -21,7 +21,7 @@ CFLAGS=-Wall -Wextra -Wno-unused-parameter -g -Os -DF_CPU=$(F_CPU)\
        -DBAUD=$(BAUD) -mmcu=$(MCU) 
 
 TARGET=main
-SRC:=$(TARGET).c support/uart.c
+SRC:=$(TARGET).c support/uart.c support/streams.c
 OBJ:=$(SRC:.c=.o) 
 
 .SUFFIXES: .elf .hex
