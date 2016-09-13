@@ -49,7 +49,7 @@ setfuses:
 		-U lfuse:w:e6:m
 
 tags: $(SOURCES)
-	@ctags --exclude=.git -R . /usr/avr/include/
+	@ctags --exclude=.git -R . 
 
 clean:
 	$(RM) $(TARGET).elf $(TARGET).hex $(OBJ) $(TARGET).lss tags
