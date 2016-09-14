@@ -28,8 +28,8 @@ void uart_setup()
 	// Enable RX and TX
 	UCSR0B = (1 << RXEN0) | (1 << TXEN0);
 
-	// Set frame format: 8data, 2stop bit 
-	UCSR0C = (1 << USBS0) | (3 << UCSZ00);
+	// Set frame format: 8 data, 1 odd parity, 2 stop bit 
+	UCSR0C = (1 << USBS0) | (3 << UPM00) | (3 << UCSZ00);
 }
 
 void uart_transmit(uint8_t data)

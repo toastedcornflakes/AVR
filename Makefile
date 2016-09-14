@@ -12,7 +12,7 @@ F_CPU=16000000UL
 
 PORT?=/dev/ttyUSB0
 BAUD=9600
-OPEN_SERIAL=picocom $(PORT) -b $(BAUD) --imap lfcrlf
+OPEN_SERIAL=picocom $(PORT) -b $(BAUD) --imap lfcrlf --parity o --stopbits 2
 
 PROGRAMMER?=usbtiny
 
