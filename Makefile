@@ -25,6 +25,7 @@ SRC:=$(TARGET).c support/uart.c support/streams.c
 OBJ:=$(SRC:.c=.o) 
 
 .SUFFIXES: .elf .hex
+.SECONDARY: $(OBJS)
 
 all: $(TARGET).hex $(TARGET).elf tags
 
@@ -54,4 +55,4 @@ tags: $(SOURCES)
 clean:
 	$(RM) $(TARGET).elf $(TARGET).hex $(OBJ) $(TARGET).lss tags
 
-.PHONY: all clean upload
+.PHONY: all clean upload serial setfuses
