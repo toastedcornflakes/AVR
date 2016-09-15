@@ -38,6 +38,8 @@ all: $(TARGET).hex $(TARGET).elf tags
 %.lss: %.elf
 	$(OBJDUMP) -h -S $< > $@
 
+listing: $(TARGET).lss
+
 upload: $(TARGET).hex
 	$(AVRDUDE) -v -p $(MCU_AVRDUDE) -c $(PROGRAMMER)\
 		-U flash:w:$(TARGET).hex
@@ -55,4 +57,4 @@ tags: $(SOURCES)
 clean:
 	$(RM) $(TARGET).elf $(TARGET).hex $(OBJ) $(TARGET).lss tags
 
-.PHONY: all clean upload serial setfuses
+.PHONY: all clean listing serial setfuses upload 
