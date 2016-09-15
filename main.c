@@ -5,24 +5,43 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include <avr/interrupt.h>
 
 #include "support/uart.h"
 #include "support/streams.h"
 
 #define INTERVAL 50000UL
 
+ISR(INT0_vect) {
+	puts("ISR");
+}
 
 static void switch_led() {
 	PORTC ^= _BV(PC3);
 }
 
-static void setup() {
-	uart_setup();
-	// setup the streams used by stdio.h 
-	streams_setup();
+static void setup_ISR() {
+	// interrupt on falling edge
+	EICRA = (1 << ISC10);
 	
+	// Enable INT0
+	EIMSK |= (1 << INTF0);
+
+	// Enable interrupts
+	sei();
+}
+
+static void setup_pins() {
 	// set PC3 as output 
 	DDRC |= _BV(DDC3);
+}
+
+static void setup() {
+	setup_pins();
+	uart_setup();
+
+	streams_setup();
+	setup_ISR();
 }
 
 int main()
