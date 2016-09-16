@@ -9,27 +9,28 @@
 
 #include "support/uart.h"
 
-#define INTERVAL 10000UL
+volatile uint8_t button = 0;
 
-ISR(INT0_vect) {
+ISR(PCINT0_vect) {
+	button = 1;
+}
+
+static void switch_leds() {
+	PORTC ^= _BV(PC3);
 	PORTC ^= _BV(PC5);
 }
 
-static void switch_led() {
-	PORTC ^= _BV(PC3);
-}
-
 static void setup_button_ISR() {
-	// interrupt on falling edge
-	EICRA = (1 << ISC10);
-
-	// Enable INT0
-	EIMSK |= (1 << INTF0);
+	PCICR |= _BV(PCIE0);
+	PCMSK0 |= _BV(PCINT0);
 }
 
 static void setup_pins() {
 	// set PC3 and PC5 as output 
 	DDRC |= (_BV(DDC3) | _BV(DDC5));
+	
+	// set PC5 as high at the start
+	PORTC |= _BV(PC5);
 }
 
 static void setup() {
@@ -43,18 +44,20 @@ static void setup() {
 
 int main()
 {
-	uint32_t l = 0;
-	uint8_t i = 0;
-
 	setup();
+	puts("Setup done");
 
 	while(1)
 	{
-		l = (l + 1) % INTERVAL;
-		if(l == 0) {
-			switch_led();
-			printf("Switching LED %d\n", i++);
+		if(button == 1) {
+			puts("Button!");
+			switch_leds();
+			// Clear only after a delay
+			_delay_ms(200);
+			button = 0;
 		}
+
+		_delay_ms(100);
 	}
 
 	return 0;
