@@ -18,7 +18,7 @@ PROGRAMMER?=usbtiny
 
 BIN_FORMAT=ihex
 CFLAGS=-Wall -Wextra -Wno-unused-parameter -g -Os -DF_CPU=$(F_CPU)\
-       -DBAUD=$(BAUD) -mmcu=$(MCU) 
+       -DBAUD=$(BAUD) -mmcu=$(MCU) -std=c99
 
 TARGET=main
 SRC:=$(TARGET).c support/uart.c

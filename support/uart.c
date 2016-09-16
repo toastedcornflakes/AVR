@@ -1,5 +1,6 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <util/atomic.h>
 
 #include <stdio.h>
 
@@ -20,28 +21,28 @@ static uint8_t buffer_n_elements = 0;
 static int _putchar(char c, FILE *stream) {
 start:
 	// start critical section
-	cli();
+	ATOMIC_BLOCK(ATOMIC_FORCEON) {
 
-	// Say we want an interrupt to trigger as soon as 
-	// UDR0 is empty
-	UCSR0B |= (1 << UDRIE0);
+		// Say we want an interrupt to trigger as soon as 
+		// UDR0 is empty
+		UCSR0B |= (1 << UDRIE0);
 
-	// Check if buffer is full
-	if (buffer_n_elements >= STREAM_BUFFER_SIZE) {
-		goto spinwait;
-	} 
+		// Check if buffer is full
+		if (buffer_n_elements >= STREAM_BUFFER_SIZE) {
+			goto spinwait;
+		} 
 
-	// Put data in the buffer
-	ring_buffer[(buffer_consumer_position + buffer_n_elements) % STREAM_BUFFER_SIZE] = c;
-	buffer_n_elements++;
+		// Put data in the buffer
+		ring_buffer[(buffer_consumer_position + buffer_n_elements) % STREAM_BUFFER_SIZE] = c;
+		buffer_n_elements++;
 
-	// end critical section
-	sei();
+		// end critical section
+	}
 	return 0;
 
 spinwait:
 	sei();
-	asm("nop");
+	__asm("nop");
 	goto start;
 }
 
@@ -86,12 +87,12 @@ void streams_setup() {
 	fdev_setup_stream(&out, _putchar, NULL, _FDEV_SETUP_WRITE);
 
 	stdout = &out;
-    
-    // putchar bufferized implementation needs interrupts to work
-	sei();
+
+	// putchar bufferized implementation needs interrupts to work
+	// make sure to call it later!
 }
 
 void uart_streams_setup() {
-    uart_setup();
-    streams_setup();
+	uart_setup();
+	streams_setup();
 }

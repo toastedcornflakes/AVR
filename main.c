@@ -25,9 +25,6 @@ static void setup_button_ISR() {
 
 	// Enable INT0
 	EIMSK |= (1 << INTF0);
-
-	// Enable interrupts
-	sei();
 }
 
 static void setup_pins() {
@@ -39,6 +36,9 @@ static void setup() {
 	setup_pins();
 	setup_button_ISR();
 	uart_streams_setup();
+
+	// Enable interrupts only when setup of all handlers is done
+	sei();
 }
 
 int main()
