@@ -3,3 +3,4 @@
 *.hex
 *.elf
 tags
+.DS_Store

@@ -10,9 +10,9 @@ MCU=atmega328p
 MCU_AVRDUDE=m328p
 F_CPU=16000000UL
 
-PORT?=/dev/ttyUSB0
+SERIALPORT?=/dev/ttyUSB0
 BAUD=9600
-OPEN_SERIAL=picocom $(PORT) -b $(BAUD) --imap lfcrlf --parity o --stopbits 2
+OPEN_SERIAL=picocom $(SERIALPORT) -b $(BAUD) --imap lfcrlf --parity o --stopbits 2
 
 PROGRAMMER?=usbtiny
 
@@ -21,7 +21,7 @@ CFLAGS=-Wall -Wextra -Wno-unused-parameter -g -Os -DF_CPU=$(F_CPU)\
        -DBAUD=$(BAUD) -mmcu=$(MCU) 
 
 TARGET=main
-SRC:=$(TARGET).c support/uart.c support/streams.c
+SRC:=$(TARGET).c support/uart.c
 OBJ:=$(SRC:.c=.o) 
 
 .SUFFIXES: .elf .hex
@@ -41,7 +41,7 @@ all: $(TARGET).hex $(TARGET).elf tags
 listing: $(TARGET).lss
 
 upload: $(TARGET).hex
-	$(AVRDUDE) -v -p $(MCU_AVRDUDE) -c $(PROGRAMMER)\
+	$(AVRDUDE) -v -p $(MCU_AVRDUDE) -c $(PROGRAMMER) -V\
 		-U flash:w:$(TARGET).hex
 
 serial:

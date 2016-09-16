@@ -8,22 +8,21 @@
 #include <avr/interrupt.h>
 
 #include "support/uart.h"
-#include "support/streams.h"
 
-#define INTERVAL 50000UL
+#define INTERVAL 10000UL
 
 ISR(INT0_vect) {
-	puts("ISR");
+	PORTC ^= _BV(PC5);
 }
 
 static void switch_led() {
 	PORTC ^= _BV(PC3);
 }
 
-static void setup_ISR() {
+static void setup_button_ISR() {
 	// interrupt on falling edge
 	EICRA = (1 << ISC10);
-	
+
 	// Enable INT0
 	EIMSK |= (1 << INTF0);
 
@@ -32,21 +31,20 @@ static void setup_ISR() {
 }
 
 static void setup_pins() {
-	// set PC3 as output 
-	DDRC |= _BV(DDC3);
+	// set PC3 and PC5 as output 
+	DDRC |= (_BV(DDC3) | _BV(DDC5));
 }
 
 static void setup() {
 	setup_pins();
-	uart_setup();
-
-	streams_setup();
-	setup_ISR();
+	setup_button_ISR();
+	uart_streams_setup();
 }
 
 int main()
 {
 	uint32_t l = 0;
+	uint8_t i = 0;
 
 	setup();
 
@@ -55,7 +53,7 @@ int main()
 		l = (l + 1) % INTERVAL;
 		if(l == 0) {
 			switch_led();
-			puts("Switching LED\n");
+			printf("Switching LED %d\n", i++);
 		}
 	}
 
