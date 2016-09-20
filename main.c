@@ -4,8 +4,10 @@
 #include <string.h>
 
 #include <avr/io.h>
-#include <util/delay.h>
 #include <avr/interrupt.h>
+#include <avr/wdt.h>
+
+#include <util/delay.h>
 
 #include "support/uart.h"
 
@@ -37,6 +39,7 @@ static void setup() {
 	setup_pins();
 	setup_button_ISR();
 	uart_streams_setup();
+	wdt_enable(WDTO_500MS);
 
 	// Enable interrupts only when setup of all handlers is done
 	sei();
@@ -58,6 +61,8 @@ int main()
 		}
 
 		_delay_ms(100);
+
+		wdt_reset();
 	}
 
 	return 0;
